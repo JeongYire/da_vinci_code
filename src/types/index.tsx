@@ -1,6 +1,7 @@
 
 
 
+
 type DavinciCard = {
     id : number,
     value : number | "joker",

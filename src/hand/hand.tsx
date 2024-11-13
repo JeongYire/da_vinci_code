@@ -1,9 +1,10 @@
-function Hand(props : {}) {
+function Hand(props : {children : any}) {
   return (
     <div style={{
         height : 100,
         display : "flex",
     }}>
+      {props.children}
     </div>
   )
 }
