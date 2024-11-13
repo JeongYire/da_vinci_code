@@ -1,13 +1,17 @@
 
 
-
-
+type DavinciCardValueType = number | "joker";
+type DavinciCardColorType = "black" | "white";
+type DavinciCardHostType =  "human" | "enemy" | "board";
+type DavinciCardInfomation = {
+    color : DavinciCardColorType,
+    value : DavinciCardValueType,
+}
 type DavinciCard = {
     id : number,
-    value : number | "joker",
-    color : "black" | "white",
+    valueInfo : DavinciCardInfomation,
     isOpen : boolean,
-    host : "human" | "enemy" | "board"
+    host : DavinciCardHostType
 }
 
-export type {DavinciCard};
+export type {DavinciCard,DavinciCardColorType,DavinciCardValueType,DavinciCardHostType,DavinciCardInfomation};
