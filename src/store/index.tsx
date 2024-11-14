@@ -1,7 +1,25 @@
 import { create } from "zustand";
 import GameManager from "../manager";
-import { DavinciGameStatus } from "../types";
+import { DavinciCard, DavinciCardHostType, DavinciGameStatus } from "../types";
 
+
+//상대카드,내카드,중앙카드를 제어할 스토어를 만들어봅시다...
+interface EnemyCard{
+  card : DavinciCard[],
+}
+
+interface PlayerCard{
+  card : DavinciCard[],
+}
+
+interface DeckCard{
+  card : DavinciCard[],
+}
+
+
+const useDeck = create<DeckCard>((set,get) => ({
+  card : [],
+}));
 
 
 interface GameInfomation{
@@ -11,7 +29,7 @@ interface GameInfomation{
 
 const useGameInfomation = create<GameInfomation>((set,get) => ({
   status : "idle",
-  message : GameManager.getStatus(get().status),
+  message : GameManager.getStatus("idle"),
 }));
 
 
@@ -30,7 +48,7 @@ const useGameProcess = create<GameStatus>((set,get) => ({
 }))
 
 
-export {useGameProcess,useGameInfomation};
+export {useGameProcess,useGameInfomation,useDeck};
     
 
 

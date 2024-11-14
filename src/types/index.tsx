@@ -2,7 +2,7 @@
 
 type DavinciCardValueType = number | "joker";
 type DavinciCardColorType = "black" | "white";
-type DavinciCardHostType =  "human" | "enemy" | "board";
+type DavinciCardHostType =  "player" | "enemy" | "deck";
 type DavinciCardInfomation = {
     color : DavinciCardColorType,
     value : DavinciCardValueType,
