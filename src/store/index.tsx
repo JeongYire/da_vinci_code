@@ -55,8 +55,6 @@ function CreateCard(){
       value : "joker",
     };
 
-    console.log(valueArray);
-
    return valueArray;
 }
 
@@ -71,6 +69,8 @@ function SuffleCard(valueArray : DavinciCardInfomation[]){
 
     // 우선 랜덤한 수를 만듭니다. 이 숫자는 valueArray의 길이에따라 범위가 변합니다.
     let randomCount = Math.floor(Math.random() * arrayLength);
+
+    // 랜덤한 수는 인덱스에 포함되니 거기다가 넣습니다.. 이렇게되면 id는 순서대로지만 value값은 랜덤이됩니다...
     cardArray[index] = {
       host : "board",
       isOpen : false,
@@ -78,6 +78,7 @@ function SuffleCard(valueArray : DavinciCardInfomation[]){
       valueInfo : valueArray[randomCount],
     }
 
+    // 값이 중복이 되면 안되므로 지워버립니다... 
     valueArray.splice(randomCount,1);
 
     index++;
@@ -94,27 +95,15 @@ function SuffleCard(valueArray : DavinciCardInfomation[]){
   return cardArray;
 }
 
-
 function StartGameAction(){
   // 우선 게임을 시작하기위해 덱을 만듭니다..
   const valueArray = CreateCard();
   // 이제 이 카드에 아이디를 할당하고 값을 셔플하면서 넣습니다...
   const cardArray : DavinciCard[] = SuffleCard(valueArray);
+  // 이제 남은거
+  // 상대카드,내카드,중앙의카드 를 제어할 스토어를 만들것
+  // 뇌를 만들것 ( 이게 가장 오래걸릴듯 )
 }
-
-
-/*
-const useGameProcess = create<CentralGameProcessingDevice>((set,get) => ({
-    cardProcessingDevice : {
-        card : [],
-        tool : {
-            createCard : CreateCard,
-            suffleCard : () => get().cardProcessingDevice.card,
-        }
-    }
-}))
-
-*/
 
 
 interface GameStatus {
