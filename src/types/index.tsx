@@ -14,4 +14,8 @@ type DavinciCard = {
     host : DavinciCardHostType
 }
 
-export type {DavinciCard,DavinciCardColorType,DavinciCardValueType,DavinciCardHostType,DavinciCardInfomation};
+
+type DavinciGameStatus = "idle" | "start";
+
+
+export type {DavinciCard,DavinciCardColorType,DavinciCardValueType,DavinciCardHostType,DavinciCardInfomation,DavinciGameStatus};

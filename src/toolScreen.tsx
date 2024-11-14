@@ -25,6 +25,10 @@ function ToolScreen() {
           게임리셋
        </h2>
        <button onClick={() => {}}>게임리셋</button>
+       <h2>
+          게임테스트
+       </h2>
+       <button onClick={() => {}}>테스트</button>
        {
       /*
         <h2>
