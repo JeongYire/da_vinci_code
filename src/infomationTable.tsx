@@ -1,13 +1,14 @@
 
 import { useEffect } from "react";
-import {useGameProcess} from "./store/index";
+import {useGame} from "./store/index";
+import GameManager from "./manager";
 
 
 function InfomationTable() {
 
   console.log("InfomationTable");
 
-  const isStart = useGameProcess(state => state.isStart);
+  const status = useGame(state => state.gameInfomation.status);
 
   return (
     <div style={{
@@ -17,14 +18,12 @@ function InfomationTable() {
         justifyContent : "center",
         alignItems : "center"
     }}>
-        <h3>안녕하세요! 게임을 시작하시려면 게임 시작 버튼을 눌러주세요...</h3>
+        <h3>{GameManager.getStatus(status)}</h3>
         {
-          isStart ? 
           <>
             <h4>남은 카드 : 0</h4>
             <button>카드뽑기</button>
           </> 
-          : <></>
         }
     </div>
   )

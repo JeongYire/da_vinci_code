@@ -1,11 +1,9 @@
-import { useContext } from "react"
-import { useGameProcess } from "./store";
+import { useGame } from "./store";
 import GameManager from "./manager";
 
 function ToolScreen() {
    console.log("ToolScreen");
 
-   const gameStart = useGameProcess(state => state.gameStartAction);
 
   return (
     <div style={{

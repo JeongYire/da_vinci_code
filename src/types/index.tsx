@@ -15,7 +15,7 @@ type DavinciCard = {
 }
 
 
-type DavinciGameStatus = "idle" | "start";
+type DavinciGameStatus = "idle" | "playerDrawTurn" | "playerJokerTurn" | "playerAttackTurn" | "enemyDrawTurn" | "enemyJokerTurn" | "enemyAttackTurn";
 
 
 export type {DavinciCard,DavinciCardColorType,DavinciCardValueType,DavinciCardHostType,DavinciCardInfomation,DavinciGameStatus};

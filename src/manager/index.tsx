@@ -1,33 +1,12 @@
 import { create } from "zustand";
 import {DavinciCardValueType,DavinciCard, DavinciCardColorType, DavinciCardInfomation, DavinciGameStatus, DavinciCardHostType}from "../types";
-import { useDeck } from "../store";
+import { useGame } from "../store";
 
 /*
-interface CentralGameProcessingDevice {
-    cardProcessingDevice : CardProcessingDevice,
-}
-
-interface CardProcessingDevice {
-    card : DavinciCard[],
-    tool : {
-        createCard : () => DavinciCard[],
-        suffleCard : () => DavinciCard[],
-    }
-}
 
 */
 
-function GetStatus(status : DavinciGameStatus){
-    if(status == "idle"){
-        return "안녕하세요! 게임을 시작하시려면 게임 시작 버튼을 눌러주세요...";
-    }
 
-    if(status == "start"){
-        return "게임시작했어요...";
-    }
-
-    return "";
-}
 
 // 카드수는 26장입니다.
 const CARD_COUNT = 26;
@@ -109,29 +88,54 @@ function SuffleCard(valueArray : DavinciCardInfomation[]){
 }
 
 // 처음에 하는 Draw 액션을 위해 만든 함수입니다... 굳이 만들지말까했는데 깔끔하게 정리하기위해 했습니다....
-function StartDrawCardAction(){
+function StartCardDeals(){
 
-  // 우선 플레이어에게 4장...
-  let cardArray = new Array();
-  let deck = useDeck.getState().card;
-  let loopCount = 0; 
-  while(true){
-    let randomCount = Math.floor(Math.random() * deck.length);
-    if(deck[randomCount].valueInfo.value == "joker"){
-      continue;
+  function StartDealCard(target : DavinciCardHostType){
+
+    let cardArray = new Array();
+    let gameStorage = useGame.getState();
+    let deck = useGame.getState().cardInfomation.deck;
+    let loopCount = 0; 
+    while(true){
+      let randomCount = Math.floor(Math.random() * deck.length);
+      if(deck[randomCount].valueInfo.value == "joker"){
+        console.log("조커라서 다시함");
+        continue;
+      }
+  
+      deck[randomCount].host = target;
+      cardArray.push(deck[randomCount]);
+      deck.splice(randomCount,1);
+  
+      loopCount++;
+  
+      if(loopCount >= 4){
+        break;
+      }
     }
 
-    deck[randomCount].host = "player";
-    cardArray.push(deck[randomCount]);
-    deck.splice(randomCount,1);
 
-    loopCount++;
+    if(target == "player"){
+      gameStorage.cardInfomation.player = cardArray;
+      //useGame.getState().cardInfomation.setPlayer(cardArray);
+      //useGame.setState({cardInfomation : {...gameStorage.cardInfomation,player : cardArray}})
+    }
 
-    if(loopCount >= 4){
-      break;
+    if(target == "enemy"){
+      gameStorage.cardInfomation.enemy = cardArray;
+      //useGame.getState().cardInfomation.setEnemy(cardArray);
+      //useGame.setState({cardInfomation : {...gameStorage.cardInfomation,enemy : cardArray}})
     }
   }
 
+  // 우선 플레이어에게 4장...
+  StartDealCard("player");
+
+  // 그리고 적에게 4장...
+  StartDealCard("enemy");
+
+  console.log("Draw 다함");
+  console.log(useGame.getState());
   
 }
 
@@ -139,40 +143,7 @@ function DrawCard(deck : DavinciCard[]){
 
   let randomCount = Math.floor(Math.random() * deck.length);
   return deck[randomCount];
-  /*
-  if(isStart){
-    console.log("처음이니까 액션이 강제됩니다...");
 
-    // 처음엔 조커를 뽑으면 안되기에 filter로 검색할까했는데. 차라리 그냥 랜덤카운트해서 조커면 다시 반복하는게 나을거같아서 바꿉니다..
-    let boardCard = useDeck.getState().card; 
-    let draw = 0;
-    const drawCardArray = new Array();
-   
-    while(true){
-  
-      console.log("반복됨!");
-      // 우선 랜덤한 수를 만듭니다. 이 숫자는 valueArray의 길이에따라 범위가 변합니다.
-      let randomCount = Math.floor(Math.random() * boardCard.length);
-  
-      if(boardCard[randomCount].valueInfo.value == "joker"){
-        console.log("조커있네..");
-        continue;
-      }
-
-      boardCard[randomCount].host = target;
-      drawCardArray.push(boardCard[randomCount]);
-      boardCard.splice(randomCount,1);
-  
-      draw++;
-
-      if(draw >= drawCount){
-        break;
-      }
-    }
-
-    console.log(drawCardArray);
-  }
-    */
 }
 
 function StartGameAction(){
@@ -180,22 +151,38 @@ function StartGameAction(){
   const valueArray = CreateCard();
   // 이제 이 카드에 아이디를 할당하고 값을 셔플하면서 넣습니다...
   const cardArray : DavinciCard[] = SuffleCard(valueArray);
-  // 이제 남은거
-  // 상대카드,내카드,중앙의카드 를 제어할 스토어를 만들것
-  // 뇌를 만들것 ( 이게 가장 오래걸릴듯 )
-  // 메시지만들생각말고 이거부터 만들것.......
-  
 
   /*우선 테이블에있는 보드에게 카드를 전부줍시다...*/
-  useDeck.setState({card : cardArray});
+  useGame.setState({cardInfomation : {...useGame.getState().cardInfomation,deck : cardArray}})
 
   /*서로 카드를 네장 나눠줍시다!*/
-  StartDrawCardAction();
+  StartCardDeals();
+
 }
 
 const GameManager = {
   getStatus : GetStatus,
   gameStart : StartGameAction
+}
+
+function GetStatus(status : DavinciGameStatus){
+  if(status == "idle"){
+      return "안녕하세요! 게임을 시작하시려면 게임 시작 버튼을 눌러주세요...";
+  }
+
+  if(status == "playerDrawTurn"){
+    return "카드를 뽑아주세요!!";
+  }
+
+  if(status == "playerAttackTurn"){
+    return "상대의 카드를 예측해주세요!!";
+  }
+
+  if(status == "playerJokerTurn"){
+    return "조커를 위치시켜주세요!!";
+  }
+
+  return "적이 행동중이에요...";
 }
 
 export default GameManager;

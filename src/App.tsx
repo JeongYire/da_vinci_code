@@ -1,6 +1,6 @@
 import GameScreen from './gameScreen'
 import EnemyHand from './hand/enemyHand'
-import MyHand from './hand/myHand'
+import PlayerHand from './hand/playerHand'
 import InfomationTable from './infomationTable'
 import MainScreen from './mainScreen'
 import ToolScreen from './toolScreen'
@@ -12,7 +12,7 @@ function App() {
        <>
         <EnemyHand />
         <InfomationTable />
-        <MyHand />
+        <PlayerHand />
        </>
       </MainScreen>
       <ToolScreen/>
