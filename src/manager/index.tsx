@@ -66,6 +66,7 @@ function SuffleCard(valueArray : DavinciCardInfomation[]){
     cardArray[index] = {
       host : "deck",
       isOpen : false,
+      isDetect : false,
       id : index,
       valueInfo : valueArray[randomCount],
     }
@@ -136,6 +137,13 @@ function StartCardDeals(){
 
   console.log("Draw 다함");
   console.log(useGame.getState());
+
+  useGame.setState({
+    gameInfomation : {
+      ...useGame.getState().gameInfomation,
+      status : "playerDrawTurn"
+    }
+  });
   
 }
 

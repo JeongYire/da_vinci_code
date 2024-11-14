@@ -11,6 +11,7 @@ type DavinciCard = {
     id : number,
     valueInfo : DavinciCardInfomation,
     isOpen : boolean,
+    isDetect : boolean,
     host : DavinciCardHostType
 }
 

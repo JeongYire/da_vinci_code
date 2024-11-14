@@ -16,7 +16,8 @@ interface GameCardStorage{
 }
 
 interface GameInfomation{
-  status : DavinciGameStatus
+  status : DavinciGameStatus,
+  setStatus : (status : DavinciGameStatus) => void,
 }
 
 interface CentralGameProcessingStorage {
@@ -53,6 +54,12 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
   },
   gameInfomation : {
     status : "idle",
+    setStatus : (value) => {
+      set((state) => ({gameInfomation : {
+        ...state.gameInfomation,
+        status : value,
+      }}))
+    } 
   }
 }));
 

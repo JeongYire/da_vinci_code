@@ -3,6 +3,8 @@ function Hand(props : {children : any}) {
     <div style={{
         height : 100,
         display : "flex",
+        justifyContent:"center",
+        alignItems:"center",
     }}>
       {props.children}
     </div>
