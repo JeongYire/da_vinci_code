@@ -36,19 +36,20 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
     enemy : [],
     player : [],
     setPlayer: (value) => {
+      console.log("setPlayer");
       set((state) => ({
         cardInfomation: {
-          ...state.cardInfomation, // 기존 cardInfomation을 그대로 유지
-          player: value, // player만 업데이트
-        }
+          ...state.cardInfomation,
+          player: [...value], 
+        },
       }));
     },
     setEnemy: (value) => {
       set((state) => ({
         cardInfomation: {
-          ...state.cardInfomation, // 기존 cardInfomation을 그대로 유지
-          enemy: value, // enemy만 업데이트
-        }
+          ...state.cardInfomation,
+          enemy: [...value], 
+        },
       }));
     },
   },

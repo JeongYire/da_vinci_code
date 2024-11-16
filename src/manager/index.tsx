@@ -97,6 +97,7 @@ function StartCardDeals(){
     let gameStorage = useGame.getState();
     let deck = useGame.getState().cardInfomation.deck;
     let loopCount = 0; 
+
     while(true){
       let randomCount = Math.floor(Math.random() * deck.length);
       if(deck[randomCount].valueInfo.value == "joker"){
@@ -115,14 +116,17 @@ function StartCardDeals(){
       }
     }
 
-
     if(target == "player"){
+
+      GameManager.cardSorting(cardArray,"player");
       gameStorage.cardInfomation.player = cardArray;
       //useGame.getState().cardInfomation.setPlayer(cardArray);
       //useGame.setState({cardInfomation : {...gameStorage.cardInfomation,player : cardArray}})
     }
 
     if(target == "enemy"){
+
+      GameManager.cardSorting(cardArray,"enemy");
       gameStorage.cardInfomation.enemy = cardArray;
       //useGame.getState().cardInfomation.setEnemy(cardArray);
       //useGame.setState({cardInfomation : {...gameStorage.cardInfomation,enemy : cardArray}})
@@ -134,6 +138,7 @@ function StartCardDeals(){
 
   // 그리고 적에게 4장...
   StartDealCard("enemy");
+
 
   console.log("Draw 다함");
   console.log(useGame.getState());
@@ -147,11 +152,30 @@ function StartCardDeals(){
   
 }
 
-function DrawCard(deck : DavinciCard[]){
+function DrawCard(target : DavinciCardHostType){
 
+  console.log("DrawCard");
+
+  let deck = useGame.getState().cardInfomation.deck;
   let randomCount = Math.floor(Math.random() * deck.length);
-  return deck[randomCount];
 
+  let targetCard =  deck[randomCount];
+
+  let gameStorage = useGame.getState();
+
+  if(target == "player"){
+    targetCard.host = "player";
+    const playerCard = gameStorage.cardInfomation.player;
+    playerCard.push(targetCard);
+    // 원랜 최적의 위치를 알아서 찾게 해야합니다.. 지금은 먼저 완성시키는게 목표니 그냥 sort로 퉁칩시다...
+    GameManager.cardSorting(playerCard,target);
+
+    gameStorage.cardInfomation.setPlayer(playerCard);
+
+    
+  }
+
+  deck.splice(randomCount,1);
 }
 
 function StartGameAction(){
@@ -168,9 +192,33 @@ function StartGameAction(){
 
 }
 
+function CardSorting(array : DavinciCard[],target : DavinciCardHostType){
+
+  array.sort((a,b) => {
+    if(a.valueInfo.value > b.valueInfo.value){
+      return target == "player" ? 1 : -1;
+    }
+    if(a.valueInfo.value < b.valueInfo.value){
+      return target == "player" ? -1 : 1;
+    }
+
+    // 숫자가 같다면 색깔만 다르단건데. 규칙상 뭐가 먼저가도 상관없으니 그냥 검은색을 뒤에둡니다.
+    if(a.valueInfo.color == "black"){
+      return 1;
+    }else{
+      return -1;
+    }
+   
+  })
+
+
+}
+
 const GameManager = {
   getStatus : GetStatus,
-  gameStart : StartGameAction
+  gameStart : StartGameAction,
+  cardSorting : CardSorting,
+  drawCard : DrawCard,
 }
 
 function GetStatus(status : DavinciGameStatus){

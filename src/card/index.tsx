@@ -17,10 +17,8 @@ export default (props : {isOpen : boolean,color : DavinciCardColorType,value : D
         }}>
             <span style={{
                 position:"absolute",
-                top:0,
-                right:0,
-                marginTop:5,
-                marginRight:5,
+                top:5,
+                right:5,
                 color:props.color == "black" ? "white" : "black"
             }}>{props.id}</span>
             <div style={{
@@ -34,7 +32,21 @@ export default (props : {isOpen : boolean,color : DavinciCardColorType,value : D
                 <span style={{
                     fontSize:"xxx-large",
                     color:props.color == "black" ? "white" : "black"
-                }}>{props.value}</span>
+                }}>{props.value == "joker" ? "ㅡ" : props.value}</span>
+                <div style={{
+                    position:"absolute",
+                    width:"100%",
+                    height:"100%",
+                }}>
+                    <span style={{
+                        position:"absolute",
+                        fontSize : 20,
+                        bottom : -20,
+                        right : -10,
+                    }}>
+                        △
+                    </span>
+                </div>
             </div>
         </div>
     ) 

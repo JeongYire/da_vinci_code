@@ -9,6 +9,8 @@ function InfomationTable() {
   console.log("InfomationTable");
 
   const status = useGame(state => state.gameInfomation.status);
+  const deckCard = useGame((state) => state.cardInfomation.deck);
+
 
   return (
     <div style={{
@@ -21,8 +23,15 @@ function InfomationTable() {
         <h3>{GameManager.getStatus(status)}</h3>
         {
           <>
-            <h4>남은 카드 : 0</h4>
-            <button>카드뽑기</button>
+            {
+              status == "playerDrawTurn" ? 
+              
+                <>
+                  <h4>남은 카드 : {deckCard.length}</h4>
+                  <button onClick={() => GameManager.drawCard("player")}>카드뽑기</button>
+                </>
+              : <></>
+            }
           </> 
         }
     </div>
