@@ -143,12 +143,9 @@ function StartCardDeals(){
   console.log("Draw 다함");
   console.log(useGame.getState());
 
-  useGame.setState({
-    gameInfomation : {
-      ...useGame.getState().gameInfomation,
-      status : "playerDrawTurn"
-    }
-  });
+
+
+  useGame.getState().gameInfomation.setStatus("playerDrawTurn");
   
 }
 
@@ -163,19 +160,36 @@ function DrawCard(target : DavinciCardHostType){
 
   let gameStorage = useGame.getState();
 
+   //임시
+  // targetCard.valueInfo.value = "joker";
+
   if(target == "player"){
     targetCard.host = "player";
-    const playerCard = gameStorage.cardInfomation.player;
-    playerCard.push(targetCard);
-    // 원랜 최적의 위치를 알아서 찾게 해야합니다.. 지금은 먼저 완성시키는게 목표니 그냥 sort로 퉁칩시다...
-    GameManager.cardSorting(playerCard,target);
-
-    gameStorage.cardInfomation.setPlayer(playerCard);
-
-    
+    gameStorage.memoryStorage.player.setRecentCard(targetCard);
   }
 
   deck.splice(randomCount,1);
+  gameStorage.gameInfomation.setStatus("playerChoiceTurn");
+}
+
+function MovementCard(cardArray : DavinciCard[],card : DavinciCard | undefined,index : number,target : DavinciCardHostType){
+  
+  console.log("MovementCard");
+
+  let gameStorage = useGame.getState();
+  if(card != undefined){
+    cardArray.splice(index,0,card);
+  }else{
+    console.log("버그!!!!!!!");
+  }
+
+  if(target == "player"){
+    gameStorage.cardInfomation.setPlayer(cardArray);
+  }else{
+    gameStorage.cardInfomation.setEnemy(cardArray);
+  }
+
+  gameStorage.gameInfomation.setStatus("playerAttackTurn");
 }
 
 function StartGameAction(){
@@ -215,30 +229,37 @@ function CardSorting(array : DavinciCard[],target : DavinciCardHostType){
 }
 
 const GameManager = {
-  getStatus : GetStatus,
+  getStatusMessage : GetStatusMessage,
   gameStart : StartGameAction,
   cardSorting : CardSorting,
   drawCard : DrawCard,
+  movementCard : MovementCard,
 }
 
-function GetStatus(status : DavinciGameStatus){
-  if(status == "idle"){
-      return "안녕하세요! 게임을 시작하시려면 게임 시작 버튼을 눌러주세요...";
+function GetStatusMessage(status : DavinciGameStatus | string){
+
+  console.log("GetStatusMessage");
+  console.log(status);
+
+  let message = "";
+
+  switch (status) {
+    case "idle":
+      message = "안녕하세요! 게임을 시작하시려면 게임 시작 버튼을 눌러주세요...";
+      break;
+    case "playerDrawTurn":
+      message = "카드를 뽑아주세요!!";
+      break;
+    case "playerAttackTurn":
+      message = "상대의 카드를 예측해주세요!!";
+      break;
+  case "playerChoiceTurn":
+      message = "카드를 위치시켜주세요!!";
+      break;
   }
 
-  if(status == "playerDrawTurn"){
-    return "카드를 뽑아주세요!!";
-  }
 
-  if(status == "playerAttackTurn"){
-    return "상대의 카드를 예측해주세요!!";
-  }
-
-  if(status == "playerJokerTurn"){
-    return "조커를 위치시켜주세요!!";
-  }
-
-  return "적이 행동중이에요...";
+  return message;
 }
 
 export default GameManager;

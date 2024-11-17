@@ -17,12 +17,26 @@ interface GameCardStorage{
 
 interface GameInfomation{
   status : DavinciGameStatus,
+  message : string,
+  setMessage : (value : string) => void,
   setStatus : (status : DavinciGameStatus) => void,
+}
+
+interface GameMemory{
+  player : {
+    recentCard? : DavinciCard 
+    setRecentCard : (card : DavinciCard) => void
+  },
+  enemy : {
+    recentCard? : DavinciCard 
+    setRecentCard : (card : DavinciCard) => void
+  }
 }
 
 interface CentralGameProcessingStorage {
   gameInfomation : GameInfomation,
   cardInfomation : GameCardStorage,
+  memoryStorage : GameMemory,
 }
 
 
@@ -55,12 +69,33 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
   },
   gameInfomation : {
     status : "idle",
+    message : GameManager.getStatusMessage("idle"),
     setStatus : (value) => {
       set((state) => ({gameInfomation : {
         ...state.gameInfomation,
         status : value,
+        message : GameManager.getStatusMessage(value),
       }}))
-    } 
+    },
+    setMessage : (value) => {
+      set((state) => ({gameInfomation : {
+        ...state.gameInfomation,
+        message : value,
+      }}))
+    }
+  },
+  memoryStorage : {
+    player : {
+      setRecentCard : (card : DavinciCard) => {
+        // 얜 구독할애가없으니 그냥 정보수정만합니다...
+        get().memoryStorage.player.recentCard = card;
+      }
+    },
+    enemy : {
+      setRecentCard : (card : DavinciCard) => {
+        get().memoryStorage.enemy.recentCard = card;
+      }
+    }
   }
 }));
 

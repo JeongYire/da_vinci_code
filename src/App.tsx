@@ -1,7 +1,7 @@
 import GameScreen from './gameScreen'
 import EnemyHand from './hand/enemyHand'
 import PlayerHand from './hand/playerHand'
-import InfomationTable from './infomationTable'
+import InfomationTable from './infomationTable/index'
 import MainScreen from './mainScreen'
 import ToolScreen from './toolScreen'
 
