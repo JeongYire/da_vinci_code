@@ -22,10 +22,15 @@ function PlayerHand() {
       GameManager.movementCard(myCard,brain.recentCard,index,"player");
       return;
     }
+    /**
+     *  생각해보니까 카드 더 뽑았을때 왼쪽이나 오른쪽카드가 조커일경우를 상정못함... 
+     */
 
+    setMessage("거긴 못가요!!!!!");
+    return;
     if(index-1 < 0){
       console.log("왼쪽 끝자락");
-      if(Number(myCard[index].valueInfo.value) >= Number(brain.recentCard.valueInfo.value)){
+      if(myCard[index].valueInfo.value >= brain.recentCard.valueInfo.value){
         GameManager.movementCard(myCard,brain.recentCard,index,"player");
         return;
       }
@@ -35,7 +40,7 @@ function PlayerHand() {
 
     if(myCard.length <= index){
       console.log("오른쪽 끝자락");
-      if(Number(myCard[index-1].valueInfo.value) <= Number(brain.recentCard.valueInfo.value)){
+      if(myCard[index-1].valueInfo.value <= brain.recentCard.valueInfo.value){
         GameManager.movementCard(myCard,brain.recentCard,index,"player");
         return;
       }
@@ -43,9 +48,9 @@ function PlayerHand() {
       return;
     }
 
-    let recentCardValue = Number(brain.recentCard.valueInfo.value);
-    let myCardLeftValue = Number(myCard[index-1].valueInfo.value);
-    let myCardRightValue = Number(myCard[index].valueInfo.value);
+    let recentCardValue = brain.recentCard.valueInfo.value;
+    let myCardLeftValue = myCard[index-1].valueInfo.value;
+    let myCardRightValue = myCard[index].valueInfo.value;
 
     if(myCardLeftValue <= recentCardValue && myCardRightValue >= recentCardValue){
       GameManager.movementCard(myCard,brain.recentCard,index,"player");
