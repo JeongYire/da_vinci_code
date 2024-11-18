@@ -249,12 +249,17 @@ function CardSorting(array : DavinciCard[],target : DavinciCardHostType){
 
 }
 
+function AttackCard(card : DavinciCard,value : DavinciCardValueType){
+  console.log(typeof value);
+}
+
 const GameManager = {
   getStatusMessage : GetStatusMessage,
   gameStart : StartGameAction,
   cardSorting : CardSorting,
   drawCard : DrawCard,
   moveCard : MoveCard,
+  attackCard : AttackCard,
 }
 
 function GetStatusMessage(status : DavinciGameStatus | string){
@@ -278,7 +283,6 @@ function GetStatusMessage(status : DavinciGameStatus | string){
       message = "카드를 위치시켜주세요!!";
       break;
   }
-
 
   return message;
 }

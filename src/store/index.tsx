@@ -25,7 +25,9 @@ interface GameInfomation{
 interface GameMemory{
   player : {
     recentCard? : DavinciCard 
-    setRecentCard : (card : DavinciCard) => void
+    setRecentCard : (card : DavinciCard) => void,
+    choiceCard? : DavinciCard,
+    setChoiceCard : (card : DavinciCard) => void
   },
   enemy : {
     recentCard? : DavinciCard 
@@ -89,7 +91,16 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
       setRecentCard : (card : DavinciCard) => {
         // 얜 구독할애가없으니 그냥 정보수정만합니다...
         get().memoryStorage.player.recentCard = card;
-      }
+      },
+      setChoiceCard : (card : DavinciCard) => {
+        set((state) => ({memoryStorage : {
+          ...state.memoryStorage,
+          player : {
+            ...state.memoryStorage.player,
+            choiceCard : card,
+          }
+        }}));
+      },
     },
     enemy : {
       setRecentCard : (card : DavinciCard) => {
