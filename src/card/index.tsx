@@ -1,7 +1,7 @@
 import { DavinciCardColorType, DavinciCardValueType, DavinciGameStatus } from "../types"
 
 
-export default (props : {isOpen : boolean,color : DavinciCardColorType,value : DavinciCardValueType,id : number,isDetect : boolean,children? : JSX.Element[]}) => {
+export default (props : {isOpen : boolean,color : DavinciCardColorType,value : DavinciCardValueType,id : number,isDetect : boolean}) => {
 
     
 
@@ -9,9 +9,9 @@ export default (props : {isOpen : boolean,color : DavinciCardColorType,value : D
         <div style={{
             width:60,
             height:80,
-            border:1,
-            borderColor:"red",
-            borderStyle:"groove",
+            outline:1,
+            outlineColor:"red",
+            outlineStyle:"groove",
             position:"relative",
         }}>
             <span style={{
@@ -33,7 +33,6 @@ export default (props : {isOpen : boolean,color : DavinciCardColorType,value : D
                     color:props.color == "black" ? "white" : "black"
                 }}>{props.value == "joker" ? "ㅡ" : props.value}</span>
             </div>
-            {props.children}
         </div>
     ) 
    

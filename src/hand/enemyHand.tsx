@@ -13,7 +13,7 @@ function EnemyHand() {
         <>
         {
           enemyCard.map(obj => {
-            return <Card key={obj.id} isDetect={obj.isDetect} isOpen={obj.isDetect} color={obj.valueInfo.color} value={obj.valueInfo.value} id={obj.id}/>
+            return <Card key={obj.id} isDetect={obj.isDetect} isOpen={obj.isDetect} color={obj.valueInfo.color} value={obj.valueInfo.value} id={obj.id} />
           })
         }
         </>

@@ -153,15 +153,32 @@ function DrawCard(target : DavinciCardHostType){
 
   console.log("DrawCard");
 
+  // 테스트시작
+  const value = prompt("뭐 원해");
+  let deck = useGame.getState().cardInfomation.deck;
+  let randomCount = Math.floor(Math.random() * deck.length);
+
+  let targetCard =  deck[randomCount];
+  let gameStorage = useGame.getState();
+
+  if(target == "player"){
+    targetCard.host = "player";
+    targetCard.valueInfo.value = value == "-" ? "joker" : Number(value);
+    gameStorage.memoryStorage.player.setRecentCard(targetCard);
+  }
+
+  deck.splice(randomCount,1);
+  gameStorage.gameInfomation.setStatus("playerChoiceTurn");
+
+  return;
+  // 테스트끝
+  /*
   let deck = useGame.getState().cardInfomation.deck;
   let randomCount = Math.floor(Math.random() * deck.length);
 
   let targetCard =  deck[randomCount];
 
   let gameStorage = useGame.getState();
-
-   //임시
-  // targetCard.valueInfo.value = "joker";
 
   if(target == "player"){
     targetCard.host = "player";
@@ -170,11 +187,12 @@ function DrawCard(target : DavinciCardHostType){
 
   deck.splice(randomCount,1);
   gameStorage.gameInfomation.setStatus("playerChoiceTurn");
+  */
 }
 
-function MovementCard(cardArray : DavinciCard[],card : DavinciCard | undefined,index : number,target : DavinciCardHostType){
+function MoveCard(cardArray : DavinciCard[],card : DavinciCard | undefined,index : number,target : DavinciCardHostType){
   
-  console.log("MovementCard");
+  console.log("MoveCard");
 
   let gameStorage = useGame.getState();
   if(card != undefined){
@@ -189,7 +207,9 @@ function MovementCard(cardArray : DavinciCard[],card : DavinciCard | undefined,i
     gameStorage.cardInfomation.setEnemy(cardArray);
   }
 
-  gameStorage.gameInfomation.setStatus("playerAttackTurn");
+  //gameStorage.gameInfomation.setStatus("playerAttackTurn");
+  // 잠깐테스트로 반복하게함
+  gameStorage.gameInfomation.setStatus("playerDrawTurn");
 }
 
 function StartGameAction(){
@@ -233,7 +253,7 @@ const GameManager = {
   gameStart : StartGameAction,
   cardSorting : CardSorting,
   drawCard : DrawCard,
-  movementCard : MovementCard,
+  moveCard : MoveCard,
 }
 
 function GetStatusMessage(status : DavinciGameStatus | string){
