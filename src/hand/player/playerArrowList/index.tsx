@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
-import Card from "../../card";
-import { useGame } from "../../store";
-import { DavinciCard } from "../../types";
-import GameManager from "../../manager";
+import { useRef } from "react";
+import { useGame } from "../../../store";
+import { DavinciCard } from "../../../types";
+import GameManager from "../../../manager";
+import ArrowList from "../../../arrowList";
 
 
 class ChoiceManager{
@@ -76,7 +76,9 @@ class PlayerCardManager{
     }
 }
 
-const ArrowList = () => {
+const PlayerArrowList = () => {
+
+    console.log("PlayerArrowList Rendering");
 
     const status = useGame((state) => state.gameInfomation.status);
     const setMessage = useGame((state) => state.gameInfomation.setMessage);
@@ -95,58 +97,11 @@ const ArrowList = () => {
 
     if(status == "playerChoiceTurn") manager.current.update();
 
-    return (
-        <div style={{
-            width : "100%",
-            height : "100%",
-            position : "absolute",
-            display : "flex",
-            justifyContent:"center",
-            alignItems:"center"
-        }}>
-        {
-            status == "playerChoiceTurn" ?
-            (
-                (
-                    () => {
-                        let elements = [];
-                        let length = useGame.getState().cardInfomation.player.length + 1;
-                        for(let index = 0; index < length; index++){
-                            elements.push(<div key={`${index}_arrow_div`} style={{
-                                width:60,
-                                height:80,
-                                textAlign:"center",
-                            }}>
-                                <span 
-                                    key={`${index}_arrow_span`}
-                                    onMouseOver={(obj) => {obj.currentTarget.style.color = "red";}} 
-                                    onMouseOut={(obj) => {obj.currentTarget.style.color = "black";}} 
-                                    onClick={() => {
-                                        choiceAction(index);
-                                    }}
-                                    style={{
-                                        display : "inline-block",
-                                        cursor : "pointer",
-                                        width : 20,
-                                        height : 20,
-                                        textAlign:"center",
-                                        position:"relative",
-                                        top:"100%",
-                                    }}>
-                                        △
-                                </span>
-                            </div>);
-                        }
-                        return elements;
-                    }
-                )()
-            ) : <></>
-        }
-        </div>
-    )
+    return <ArrowList host="player" status="playerChoiceTurn" onClick={choiceAction}/>;
+    
     
 }
 
 
 
-export default ArrowList;
+export default PlayerArrowList;

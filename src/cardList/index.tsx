@@ -1,9 +1,9 @@
-import Card from "../../card";
-import { useGame } from "../../store";
+import Card from "./card";
+import { useGame } from "../store";
 
-const CardList = () => {
+const CardList = (props : {host : "player" | "enemy"}) => {
 
-    const cardList = useGame((state) => state.cardInfomation.player);
+    const cardList = props.host == "player" ? useGame((state) => state.cardInfomation.player) : useGame((state) => state.cardInfomation.enemy);
 
     return (
         <div style={{

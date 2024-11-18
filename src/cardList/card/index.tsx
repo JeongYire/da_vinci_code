@@ -1,4 +1,4 @@
-import { DavinciCardColorType, DavinciCardValueType, DavinciGameStatus } from "../types"
+import { DavinciCardColorType, DavinciCardValueType } from "../../types"
 
 
 export default (props : {isOpen : boolean,color : DavinciCardColorType,value : DavinciCardValueType,id : number,isDetect : boolean}) => {

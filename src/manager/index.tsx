@@ -209,7 +209,8 @@ function MoveCard(cardArray : DavinciCard[],card : DavinciCard | undefined,index
 
   //gameStorage.gameInfomation.setStatus("playerAttackTurn");
   // 잠깐테스트로 반복하게함
-  gameStorage.gameInfomation.setStatus("playerDrawTurn");
+  //gameStorage.gameInfomation.setStatus("playerDrawTurn");
+  gameStorage.gameInfomation.setStatus("playerAttackTurn");
 }
 
 function StartGameAction(){
