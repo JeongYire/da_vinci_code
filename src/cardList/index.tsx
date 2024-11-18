@@ -16,7 +16,7 @@ const CardList = (props : {host : "player" | "enemy"}) => {
         }}>
         {
             cardList.map(obj=>{
-                return <Card key={obj.id} isDetect={obj.isDetect} isOpen={true} color={obj.valueInfo.color} value={obj.valueInfo.value} id={obj.id}/>
+                return <Card host={props.host} key={obj.id} isDetect={obj.isDetect} isOpen={props.host == "player" ? true : obj.isDetect} color={obj.valueInfo.color} value={obj.valueInfo.value} id={obj.id}/>
             })
             
         }

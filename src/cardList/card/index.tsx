@@ -1,7 +1,7 @@
 import { DavinciCardColorType, DavinciCardValueType } from "../../types"
 
 
-export default (props : {isOpen : boolean,color : DavinciCardColorType,value : DavinciCardValueType,id : number,isDetect : boolean}) => {
+export default (props : {host : "player" | "enemy",isOpen : boolean,color : DavinciCardColorType,value : DavinciCardValueType,id : number,isDetect : boolean}) => {
 
     
 
@@ -28,10 +28,15 @@ export default (props : {isOpen : boolean,color : DavinciCardColorType,value : D
                 alignItems:"center",
                 backgroundColor:props.color == "black" ? "black" : "white"
             }}>
-                <span style={{
-                    fontSize:"xxx-large",
-                    color:props.color == "black" ? "white" : "black"
-                }}>{props.value == "joker" ? "ㅡ" : props.value}</span>
+                {
+                    props.isOpen ?
+                    <span style={{
+                        fontSize:"xxx-large",
+                        color:(props.host == "player" && props.isDetect) ? "red" : props.color == "black" ? "white" : "black"
+                    }}>{props.value == "joker" ? "ㅡ" : props.value}</span>
+                    :
+                    <h5>{props.value == "joker" ? "ㅡ" : props.value}</h5>
+                }
             </div>
         </div>
     ) 

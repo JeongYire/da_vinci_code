@@ -95,9 +95,10 @@ const PlayerArrowList = () => {
         }
     }
 
-    if(status == "playerChoiceTurn") manager.current.update();
+    if(status == "playerChoiceTurn" || status == "playerAttackRetryTurn") manager.current.update();
+    console.log(status);
 
-    return <ArrowList host="player" status="playerChoiceTurn" onClick={choiceAction}/>;
+    return <ArrowList host="player" check={status == "playerChoiceTurn"} onClick={choiceAction}/>;
     
     
 }

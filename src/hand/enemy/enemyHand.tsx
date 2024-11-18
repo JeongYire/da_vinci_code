@@ -19,7 +19,7 @@ function EnemyHand() {
   return (
     <Hand>
         <CardList host="enemy" />
-        <ArrowList host="enemy" status="playerAttackTurn" onClick={choiceAction}/>
+        <ArrowList host="enemy" check={status == "playerAttackTurn" || status == "playerAttackRetryTurn"}onClick={choiceAction}/>
     </Hand>
   )
 }

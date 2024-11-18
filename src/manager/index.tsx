@@ -249,8 +249,38 @@ function CardSorting(array : DavinciCard[],target : DavinciCardHostType){
 
 }
 
-function AttackCard(card : DavinciCard,value : DavinciCardValueType){
-  console.log(typeof value);
+function AttackCard(card : DavinciCard,value : DavinciCardValueType,host : DavinciCardHostType = "player"){
+
+  const attackVaild = card.valueInfo.value == value;
+  const gameStorage = useGame.getState();
+  if(host == "player"){
+    if(attackVaild){
+
+     
+      const enemyCard = gameStorage.cardInfomation.enemy;
+
+      let target = enemyCard.find(obj => obj.id == card.id) as DavinciCard;
+      target.isDetect = true;
+
+      gameStorage.memoryStorage.player.choiceCard = undefined;
+      gameStorage.cardInfomation.setEnemy(enemyCard);
+
+      gameStorage.gameInfomation.setStatus("playerAttackRetryTurn");
+    }else{
+
+      
+      gameStorage.memoryStorage.player.choiceCard = undefined;
+      const recentCard = gameStorage.memoryStorage.player.recentCard as DavinciCard;
+      const playerCard = gameStorage.cardInfomation.player;
+      
+      let target = playerCard.find(obj => obj.id == recentCard.id) as DavinciCard;
+      target.isDetect = true;
+
+      gameStorage.memoryStorage.player.recentCard = undefined;
+      
+      gameStorage.cardInfomation.setPlayer(playerCard);
+    }
+  }
 }
 
 const GameManager = {
@@ -281,6 +311,9 @@ function GetStatusMessage(status : DavinciGameStatus | string){
       break;
   case "playerChoiceTurn":
       message = "카드를 위치시켜주세요!!";
+      break;
+  case "playerAttackRetryTurn":
+      message = "카드 공격에 성공했습니다! 다시 공격하거나, 턴을 끝낼 수 있어요!";
       break;
   }
 

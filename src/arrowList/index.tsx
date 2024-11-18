@@ -1,9 +1,10 @@
 import { DavinciGameStatus } from "../types";
 import { useGame } from "../store";
 
-const ArrowList = (props : {host : "player" | "enemy",status : DavinciGameStatus,onClick : (index : number) => void}) => {
+const ArrowList = (props : {host : "player" | "enemy",check : boolean,onClick : (index : number) => void}) => {
 
     const status = useGame((state) => state.gameInfomation.status);
+    console.log(props.check);
 
     return (
         <div style={{
@@ -15,7 +16,7 @@ const ArrowList = (props : {host : "player" | "enemy",status : DavinciGameStatus
             alignItems:"center"
         }}>
         {
-            status == props.status?
+            props.check ?
             (
                 (
                     () => {
