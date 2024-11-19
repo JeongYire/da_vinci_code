@@ -42,6 +42,9 @@ function StartGame(){
   /*카드를 나눠주는 작업을 실행합니다...*/
   CardManager.dealCard();
 
+  /*턴 관리자에게 게임이 시작됐음을 알립니다...*/
+  TurnManager.isGameStart();
+
   /*작업을 전부 끝마쳤으면 이제 스테이터스를 바꿉니다...*/
   useGame.getState().gameInfomation.setStatus("playerDrawTurn");
 
@@ -84,16 +87,15 @@ function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : 
   const gameStorage = useGame.getState();
 
   if(host == "player"){
-    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyDrawTurn");
+    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyTurn");
     return;
   }
 
   if(host == "enemy"){
-    result ? gameStorage.gameInfomation.setStatus("enemyAttackTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
+    result ? gameStorage.gameInfomation.setStatus("enemyTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
     return;
   }
 
- 
 }
 
 const GameManager = {
@@ -102,6 +104,7 @@ const GameManager = {
   drawCard : DrawCard,
   moveCard : MoveCard,
   attackCard : AttackCard,
+  turnChange : TurnManager.turnChange,
 }
 
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import GameManager from "../manager";
-import { DavinciCard, DavinciCardHostType, DavinciGameStatus } from "../types";
+import { DavinciCard, DavinciCardHostType, DavinciCardValueType, DavinciGameStatus, DavinciMemory } from "../types";
 
 
 
@@ -22,17 +22,18 @@ interface GameInfomation{
   setStatus : (status : DavinciGameStatus) => void,
 }
 
+interface CommonMemory{
+  recentCard? : DavinciCard 
+  setRecentCard : (card : DavinciCard) => void,
+  choiceCard? : DavinciCard,
+  setChoiceCard : (card : DavinciCard) => void
+}
+
+
+
 interface GameMemory{
-  player : {
-    recentCard? : DavinciCard 
-    setRecentCard : (card : DavinciCard) => void,
-    choiceCard? : DavinciCard,
-    setChoiceCard : (card : DavinciCard) => void
-  },
-  enemy : {
-    recentCard? : DavinciCard 
-    setRecentCard : (card : DavinciCard) => void
-  }
+  player : CommonMemory,
+  enemy : CommonMemory & {brain : DavinciMemory[]}
 }
 
 interface CentralGameProcessingStorage {
@@ -77,7 +78,8 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
         ...state.gameInfomation,
         status : value,
         message : GameManager.getStatusMessage(value),
-      }}))
+      }}));
+      GameManager.turnChange(value);
     },
     setMessage : (value) => {
       set((state) => ({gameInfomation : {
@@ -105,7 +107,11 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
     enemy : {
       setRecentCard : (card : DavinciCard) => {
         get().memoryStorage.enemy.recentCard = card;
-      }
+      },
+      setChoiceCard : (card : DavinciCard) => {
+        get().memoryStorage.enemy.choiceCard = card;
+      },
+      brain : [],
     }
   }
 }));
