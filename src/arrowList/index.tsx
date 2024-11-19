@@ -1,10 +1,8 @@
 import { DavinciGameStatus } from "../types";
 import { useGame } from "../store";
+import Arrow from "./arrow";
 
 const ArrowList = (props : {host : "player" | "enemy",check : boolean,onClick : (index : number) => void}) => {
-
-    const status = useGame((state) => state.gameInfomation.status);
-    console.log(props.check);
 
     return (
         <div style={{
@@ -21,32 +19,10 @@ const ArrowList = (props : {host : "player" | "enemy",check : boolean,onClick : 
                 (
                     () => {
                         let elements = [];
-                        let length = props.host == "player" ? useGame.getState().cardInfomation.player.length + 1 : useGame.getState().cardInfomation.enemy.length;
+                        let array = props.host == "player" ? useGame.getState().cardInfomation.player : useGame.getState().cardInfomation.enemy;
+                        let length = props.host == "player" ? array.length + 1 : array.length;
                         for(let index = 0; index < length; index++){
-                            elements.push(<div key={`${index}_arrow_div`} style={{
-                                width:60,
-                                height:80,
-                                textAlign:"center",
-                            }}>
-                                <span 
-                                    key={`${index}_arrow_span`}
-                                    onMouseOver={(obj) => {obj.currentTarget.style.color = "red";}} 
-                                    onMouseOut={(obj) => {obj.currentTarget.style.color = "black";}} 
-                                    onClick={() => {
-                                        props.onClick(index);
-                                    }}
-                                    style={{
-                                        display : "inline-block",
-                                        cursor : "pointer",
-                                        width : 20,
-                                        height : 20,
-                                        textAlign:"center",
-                                        position:"relative",
-                                        top:"100%",
-                                    }}>
-                                        △
-                                </span>
-                            </div>);
+                            elements.push(<Arrow key={`Arrow_enemy_${index}`} check={!(props.host == "enemy" && array[index].isDetect == true)} onClick={() => props.onClick(index)}/>); 
                         }
                         return elements;
                     }

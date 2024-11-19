@@ -78,8 +78,6 @@ class PlayerCardManager{
 
 const PlayerArrowList = () => {
 
-    console.log("PlayerArrowList Rendering");
-
     const status = useGame((state) => state.gameInfomation.status);
     const setMessage = useGame((state) => state.gameInfomation.setMessage);
     const manager = useRef<PlayerCardManager>(new PlayerCardManager());
@@ -89,18 +87,15 @@ const PlayerArrowList = () => {
         const myCard = gameStorage.cardInfomation.player;
         const recentCard = gameStorage.memoryStorage.player.recentCard;
         if(manager.current.choice(index)){
-            GameManager.moveCard(myCard,recentCard,index,"player")
+            GameManager.moveCard(myCard,index,"player")
         }else{
             setMessage("거기에 둘 수 없어요!");
         }
     }
 
     if(status == "playerChoiceTurn" || status == "playerAttackRetryTurn") manager.current.update();
-    console.log(status);
 
     return <ArrowList host="player" check={status == "playerChoiceTurn"} onClick={choiceAction}/>;
-    
-    
 }
 
 

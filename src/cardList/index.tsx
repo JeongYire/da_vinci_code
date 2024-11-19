@@ -3,6 +3,7 @@ import { useGame } from "../store";
 
 const CardList = (props : {host : "player" | "enemy"}) => {
 
+    console.log(`${props.host} CardList Render`);
     const cardList = props.host == "player" ? useGame((state) => state.cardInfomation.player) : useGame((state) => state.cardInfomation.enemy);
 
     return (
