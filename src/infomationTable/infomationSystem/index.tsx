@@ -1,6 +1,8 @@
 import { MutableRefObject, useRef } from "react";
 import GameManager from "../../manager";
 import { useGame } from "../../store";
+import TurnManager from "../../manager/turnManager";
+import { DavinciCard } from "../../types";
 
 
 function InfomationSystem() {
@@ -31,7 +33,7 @@ function InfomationSystem() {
     }
 
     if(inputRef.current.value == "joker" || inputRef.current.value == "-"){
-      GameManager.attackCard(playerMemory.choiceCard,"joker");
+      GameManager.attackCard(playerMemory.recentCard as DavinciCard,playerMemory.choiceCard,"joker");
       return;
     }
 
@@ -40,7 +42,7 @@ function InfomationSystem() {
       return;
     }
  
-    GameManager.attackCard(playerMemory.choiceCard,Number(inputRef.current?.value));
+    GameManager.attackCard(playerMemory.recentCard as DavinciCard,playerMemory.choiceCard,Number(inputRef.current?.value));
   }
 
   return (

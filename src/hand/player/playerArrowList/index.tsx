@@ -83,11 +83,8 @@ const PlayerArrowList = () => {
     const manager = useRef<PlayerCardManager>(new PlayerCardManager());
 
     function choiceAction(index : number){
-        const gameStorage = useGame.getState();
-        const myCard = gameStorage.cardInfomation.player;
-        const recentCard = gameStorage.memoryStorage.player.recentCard;
         if(manager.current.choice(index)){
-            GameManager.moveCard(myCard,index,"player")
+            GameManager.moveCard(index,"player");
         }else{
             setMessage("거기에 둘 수 없어요!");
         }

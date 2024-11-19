@@ -1,81 +1,46 @@
 import { create } from "zustand";
 import {DavinciCardValueType,DavinciCard, DavinciCardColorType, DavinciCardInfomation, DavinciGameStatus, DavinciCardHostType}from "../types";
 import { useGame } from "../store";
-import cardManager from "./cardManager";
+import CardManager from "./cardManager";
+import TurnManager from "./turnManager";
 
 
 function DrawCard(target : DavinciCardHostType){
 
   console.log("DrawCard");
 
-  /* 테스트시작
-  const value = prompt("뭐 원해");
-  let deck = useGame.getState().cardInfomation.deck;
-  let randomCount = Math.floor(Math.random() * deck.length);
-
-  let targetCard =  deck[randomCount];
-  let gameStorage = useGame.getState();
-
-  if(target == "player"){
-    targetCard.host = "player";
-    targetCard.valueInfo.value = value == "-" ? "joker" : Number(value);
-    gameStorage.memoryStorage.player.setRecentCard(targetCard);
-  }
-
-  deck.splice(randomCount,1);
-  gameStorage.gameInfomation.setStatus("playerChoiceTurn");
-
-  return;
-  테스트 끝 */
-
-  const card = cardManager.draw()[0];
+  const card = CardManager.draw()[0];
   
   let gameStorage = useGame.getState();
 
   /* host 바꾸는걸 GameManager가 할지 CardManager가 할지 고민중... */
+  /* 현재는 GameManager가 하고있습니다... */
+
   if(target == "player"){
     card.host = "player";
     gameStorage.memoryStorage.player.setRecentCard(card);
+    gameStorage.gameInfomation.setStatus("playerChoiceTurn");
   }
 
-  gameStorage.gameInfomation.setStatus("playerChoiceTurn");
-  
 }
 
-function MoveCard(cardArray : DavinciCard[],index : number,target : DavinciCardHostType){
+function MoveCard(index : number,target : DavinciCardHostType){
   
   console.log("MoveCard");
+  CardManager.move(index);
+  useGame.getState().gameInfomation.setStatus("playerAttackTurn");
 
-  let gameStorage = useGame.getState();
-  let card = gameStorage.memoryStorage.player.recentCard;
-  
-  if(card != undefined){
-    cardArray.splice(index,0,card);
-  }else{
-    console.log("버그!!!!!!!");
-  }
-
-  if(target == "player"){
-    gameStorage.cardInfomation.setPlayer(cardArray);
-  }else{
-    gameStorage.cardInfomation.setEnemy(cardArray);
-  }
-
-  //gameStorage.gameInfomation.setStatus("playerAttackTurn");
-  // 잠깐테스트로 반복하게함
-  //gameStorage.gameInfomation.setStatus("playerDrawTurn");
-  gameStorage.gameInfomation.setStatus("playerAttackTurn");
 }
 
 function StartGame(){
   
-  const cardArray = cardManager.createCard();
+  const cardArray = CardManager.createCard();
 
   /*우선 테이블에있는 보드에게 카드를 전부줍시다...*/
   useGame.getState().cardInfomation.deck = cardArray;
 
   /*카드를 나눠주는 작업을 실행합니다...*/
-  cardManager.dealCard();
+  CardManager.dealCard();
 
   /*작업을 전부 끝마쳤으면 이제 스테이터스를 바꿉니다...*/
   useGame.getState().gameInfomation.setStatus("playerDrawTurn");
@@ -113,39 +78,22 @@ function GetStatusMessage(status : DavinciGameStatus | string){
   return message;
 }
 
-function AttackCard(card : DavinciCard,value : DavinciCardValueType,host : DavinciCardHostType = "player"){
+function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : DavinciCardValueType,host : "player" | "enemy" = "player"){
 
-  const attackVaild = card.valueInfo.value == value;
+  const result = TurnManager.attackCard(myCard,targetCard,attackValue,host);
   const gameStorage = useGame.getState();
+
   if(host == "player"){
-    if(attackVaild){
-
-     
-      const enemyCard = gameStorage.cardInfomation.enemy;
-
-      let target = enemyCard.find(obj => obj.id == card.id) as DavinciCard;
-      target.isDetect = true;
-
-      gameStorage.memoryStorage.player.choiceCard = undefined;
-      gameStorage.cardInfomation.setEnemy(enemyCard);
-
-      gameStorage.gameInfomation.setStatus("playerAttackRetryTurn");
-    }else{
-
-      
-      gameStorage.memoryStorage.player.choiceCard = undefined;
-      const recentCard = gameStorage.memoryStorage.player.recentCard as DavinciCard;
-      const playerCard = gameStorage.cardInfomation.player;
-      
-      let target = playerCard.find(obj => obj.id == recentCard.id) as DavinciCard;
-      target.isDetect = true;
-
-      gameStorage.memoryStorage.player.recentCard = undefined;
-      
-      gameStorage.cardInfomation.setPlayer(playerCard);
-      gameStorage.gameInfomation.setStatus("enemyDrawTurn");
-    }
+    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyDrawTurn");
+    return;
   }
+
+  if(host == "enemy"){
+    result ? gameStorage.gameInfomation.setStatus("enemyAttackTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
+    return;
+  }
+
+ 
 }
 
 const GameManager = {

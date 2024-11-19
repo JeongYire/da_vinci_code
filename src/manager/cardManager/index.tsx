@@ -28,7 +28,7 @@ import { DavinciCard, DavinciCardHostType, DavinciCardInfomation } from "../../t
     const VALUE_COUNT = 12;
 
 
-    class CardManager{
+    class CardManagerSystem{
 
         private createCardValue(){
             const valueArray = new Array<DavinciCardInfomation>(CARD_COUNT);
@@ -173,7 +173,6 @@ import { DavinciCard, DavinciCardHostType, DavinciCardInfomation } from "../../t
             if(this.isEmpty(card)) return;
             playerCard.splice(index,0,card);
             gameStorage.cardInfomation.setPlayer(playerCard);
-            gameStorage.gameInfomation.setStatus("playerAttackTurn");
 
         }
 
@@ -195,7 +194,9 @@ import { DavinciCard, DavinciCardHostType, DavinciCardInfomation } from "../../t
 
     }
 
-    export default (new CardManager());
+    const CardManager = new CardManagerSystem();
+
+    export default CardManager;
 
 
 
