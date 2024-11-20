@@ -13,6 +13,7 @@ class CardTracker{
     private cardMetadata : DavinciMemory[];
     private myCard : DavinciCard[];
     private myMap : any;
+    private playerCard : DavinciCard[];
    // private playerCard : DavinciCard[];
 
     
@@ -20,14 +21,14 @@ class CardTracker{
        this.cardMetadata  = [];
        this.myCard = [];
        this.myMap = {}
-       //this.playerCard = [];
+       this.playerCard = [];
     }
 
     /**
      * 카드에 있는 숫자의 경우의수를 전부 구해서 배열로 리턴합니다...
      * @returns 경우의수 배열
      */
-    private initCandidateValue(){
+    private initCandidateValue(isStart : boolean = false){
         let recentValue = -1;
         let targetValue = 0;
         let array : DavinciCardValueType[] = [];
@@ -40,7 +41,8 @@ class CardTracker{
                 recentValue = targetValue;
             }
    
-            if(targetValue == 13){
+            /** 첫턴에는 조커가 뽑히지 않기에 이렇게 줄여버립니다... */
+            if(targetValue == (isStart ? 12 : 13)){
                 break;
             }
         }
@@ -55,12 +57,13 @@ class CardTracker{
     private initMetaData(){
         const gameStorage = useGame.getState();
         const playerCards = gameStorage.cardInfomation.player;
+        this.playerCard = playerCards;
         let length = playerCards.length;
         for(let i = 0; i < length; i++){
             this.cardMetadata.push({
                 id : playerCards[i].id,
                 recentIndex : i,
-                candidateValue : this.initCandidateValue(),
+                candidateValue : this.initCandidateValue(true),
                 isDetect : false,
             })
         }
@@ -141,11 +144,6 @@ class CardTracker{
             }
         }
 
-        /*
-        console.log("-- 변경됨 --");
-        console.log(playerCard);
-        console.log(this.cardMetadata);
-        */
 
     }
     initTracker(){
@@ -163,27 +161,42 @@ class CardTracker{
     }
 
     private updatePlayerCard(){
+        
         const gameStorage = useGame.getState();
         const playerCards = gameStorage.cardInfomation.player;
         let playerCardLength = playerCards.length;
+
         if((this.cardMetadata.length != playerCardLength) || playerCards.findIndex(obj => obj.isDetect == true) != -1){
-            console.log("플레이어 카드의 변화가 감지됐어요! 업데이트를 실행합니다...");
+
             this.updateMetaData(playerCards,playerCardLength);
         }
     }
 
     private updateEnemyCard(){
+
         const gameStorage = useGame.getState();
         const myCard = gameStorage.cardInfomation.enemy;
+        this.myCard = myCard;
+        this.makingMyMap();
+
         if(this.myCard.length != myCard.length){
             console.log("에너미 카드의 변화가 감지됐어요! 업데이트를 실행합니다...");
+            /* 임시로 만드는중... */
             this.myCard = myCard;
             this.makingMyMap();
+            let length = this.cardMetadata.length;
+            for(let i = 0; i < length; i++){
+               this.doOptimization(this.cardMetadata[i]);
+            }
         }
     }
 
+    /* 플레이어의 카드에서 예측을 해봅니다... */
+    doThinking(){
 
-    private acting(){
+        console.log("컴퓨터의 생각 시작!!");
+        /* metaData 를 살펴봅시다... */
+        console.log(this.cardMetadata);
 
     }
 
@@ -275,7 +288,7 @@ class TurnSystemManager{
     private isVaildRange(index : number,recentCard : DavinciCard,cards : DavinciCard[]){
         if(ChoiceManager.isEmpty(recentCard)) return false;
         let recentValue = Number(recentCard.valueInfo.value);
-        return ChoiceManager.left(index,cards) >= recentValue && ChoiceManager.right(index,cards) <= recentValue;
+        return ChoiceManager.left(index,cards) <= recentValue && ChoiceManager.right(index,cards) >= recentValue;
     }
 
     startEnemyTurn(){
@@ -286,13 +299,15 @@ class TurnSystemManager{
         GameManager.drawCard("enemy");
         /* 뽑힌 카드 를 봅니다.*/
         
-        const recentCard = gameStorage.memoryStorage.enemy.recentCard;
+        let recentCard = gameStorage.memoryStorage.enemy.recentCard;
 
         console.log("-- 뽑힌 카드 --");
         console.log(recentCard?.valueInfo.value);
 
         let enemyCard = gameStorage.cardInfomation.enemy; 
-    
+        enemyCard.reverse();
+        if(recentCard == undefined)return;
+  
         if(recentCard?.valueInfo.value != "joker"){
             
             /* 상대패.. 즉 enemyCard는 왼쪽기준으로 가장 큽니다... 그걸 유의하시오 */
@@ -319,10 +334,18 @@ class TurnSystemManager{
 
         }else{
             console.log("조커네? 아무데나 놓을까?");
+
+            let randomCount = Math.floor(Math.random() * (enemyCard.length+1));
+            enemyCard.splice(randomCount,0,recentCard);
         }
 
+        enemyCard.reverse();
         gameStorage.cardInfomation.setEnemy(enemyCard);
 
+        /* 먼저 턴을 바꿉니다. */
+        gameStorage.gameInfomation.setStatus("enemyAttackTurn");
+
+        this.tracker.doThinking();
         
     }
 
