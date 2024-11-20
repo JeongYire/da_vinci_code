@@ -3,45 +3,14 @@ import { useGame } from "../../../store";
 import { DavinciCard } from "../../../types";
 import GameManager from "../../../manager";
 import ArrowList from "../../../arrowList";
+import { ChoiceManager } from "../../../manager/choiceManager";
 
 
-class ChoiceManager{
 
-    isEmpty(target : DavinciCard | undefined){return target == undefined};
-    isJoker(target : DavinciCard){return target.valueInfo.value == "joker"};
-
-    left(targetIndex : number,targetArray : DavinciCard[]) : number{
-        console.log("left 함수 사용");
-        let target = targetArray[targetIndex-1];
-        if(this.isEmpty(target)){
-        /* 카드의 숫자는 0~11 이기때문에 -1로합니다.. -99로하든 -999로하든 상관없음 나중에 값체크할때 true가 나오는게 목적이라*/
-        console.log(`결과  : -1`);
-        return -1;
-        };
-        if(this.isJoker(target)) return this.left(targetIndex-1,targetArray);
-        console.log(`결과  : ${target.valueInfo.value}`);
-        return Number(target.valueInfo.value);
-    }
-
-    right(targetIndex : number,targetArray : DavinciCard[]) : number{
-        console.log("right 함수 사용");
-        let target = targetArray[targetIndex];
-        if(this.isEmpty(target)){
-        /* 카드의 숫자는 0~11 이기때문에 12로합니다.. 99로하든 999로하든 상관없음 나중에 값체크할때 true가 나오는게 목적이라*/
-        console.log(`결과  : 12`);
-        return 12;
-        };
-        if(this.isJoker(target)) return this.right(targetIndex+1,targetArray);
-        console.log(`결과  : ${target.valueInfo.value}`);
-        return Number(target.valueInfo.value);
-    }
-
-}
   
 class PlayerCardManager{
     cards: DavinciCard[];
     recentCard: DavinciCard | undefined;
-    choiceManager : ChoiceManager;
 
     constructor(){
 
@@ -49,8 +18,7 @@ class PlayerCardManager{
         const gameStorage = useGame.getState();
         this.cards = gameStorage.cardInfomation.player;
         this.recentCard = gameStorage.memoryStorage.player.recentCard;
-        this.choiceManager = new ChoiceManager();
-
+   
     }
 
     update() {
@@ -60,18 +28,17 @@ class PlayerCardManager{
     }
 
     private isVaildRange(index : number,recentCard : DavinciCard){
-        if(this.choiceManager.isEmpty(recentCard)) return false;
+        if(ChoiceManager.isEmpty(recentCard)) return false;
         let recentValue = Number(recentCard.valueInfo.value);
-        return this.choiceManager.left(index,this.cards) <= recentValue && this.choiceManager.right(index,this.cards) >= recentValue;
+        return ChoiceManager.left(index,this.cards) <= recentValue && ChoiceManager.right(index,this.cards) >= recentValue;
     }
 
     choice(index : number){ 
         console.log("CHOICE");
-        console.log(this.cards);
-        console.log(this.recentCard);
+        console.log(index);
         const {recentCard} = this;
-        if(this.choiceManager.isEmpty(recentCard)) return false;
-        if(this.choiceManager.isJoker(recentCard)) return true;
+        if(ChoiceManager.isEmpty(recentCard)) return false;
+        if(ChoiceManager.isJoker(recentCard)) return true;
         return this.isVaildRange(index,recentCard);
     }
 }

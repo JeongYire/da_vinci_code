@@ -1,5 +1,7 @@
+import GameManager from "..";
 import { useGame } from "../../store";
 import { DavinciCard, DavinciCardValueType, DavinciGameStatus, DavinciMemory } from "../../types";
+import { ChoiceManager } from "../choiceManager";
 
 
 /**
@@ -268,6 +270,60 @@ class TurnSystemManager{
     turnChange(status : DavinciGameStatus){
         console.log(`현재 턴 : ${status}`);
         this.tracker.updateMemory();
+    }
+
+    private isVaildRange(index : number,recentCard : DavinciCard,cards : DavinciCard[]){
+        if(ChoiceManager.isEmpty(recentCard)) return false;
+        let recentValue = Number(recentCard.valueInfo.value);
+        return ChoiceManager.left(index,cards) >= recentValue && ChoiceManager.right(index,cards) <= recentValue;
+    }
+
+    startEnemyTurn(){
+        let gameStorage = useGame.getState();
+        /* 먼저 턴을 바꿉니다. */
+        gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn")
+        /* 그리고 카드를 뽑습니다. */
+        GameManager.drawCard("enemy");
+        /* 뽑힌 카드 를 봅니다.*/
+        
+        const recentCard = gameStorage.memoryStorage.enemy.recentCard;
+
+        console.log("-- 뽑힌 카드 --");
+        console.log(recentCard?.valueInfo.value);
+
+        let enemyCard = gameStorage.cardInfomation.enemy; 
+    
+        if(recentCard?.valueInfo.value != "joker"){
+            
+            /* 상대패.. 즉 enemyCard는 왼쪽기준으로 가장 큽니다... 그걸 유의하시오 */
+            console.log("현재 배열");
+            console.log(enemyCard);
+
+            if(recentCard == undefined)return;
+  
+            let count = 0;
+
+            while(true){
+                if(this.isVaildRange(count,recentCard,enemyCard)){
+                    enemyCard.splice(count,0,recentCard);
+                    break;
+                }
+
+                if(count == enemyCard.length){
+                    console.log("오류!!!!");
+                    break;
+                }
+
+                count += 1;
+            }
+
+        }else{
+            console.log("조커네? 아무데나 놓을까?");
+        }
+
+        gameStorage.cardInfomation.setEnemy(enemyCard);
+
+        
     }
 
 

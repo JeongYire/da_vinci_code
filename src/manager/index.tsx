@@ -20,7 +20,11 @@ function DrawCard(target : DavinciCardHostType){
     card.host = "player";
     gameStorage.memoryStorage.player.setRecentCard(card);
     gameStorage.gameInfomation.setStatus("playerChoiceTurn");
+  }else{
+    card.host = "enemy";
+    gameStorage.memoryStorage.enemy.setRecentCard(card);
   }
+  
 
 }
 
@@ -89,12 +93,12 @@ function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : 
   const gameStorage = useGame.getState();
 
   if(host == "player"){
-    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn");
+    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : TurnManager.startEnemyTurn();
     return;
   }
 
   if(host == "enemy"){
-    result ? gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
+    result ? TurnManager.startEnemyTurn() : gameStorage.gameInfomation.setStatus("playerDrawTurn");
     return;
   }
 
