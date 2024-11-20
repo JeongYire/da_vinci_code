@@ -189,7 +189,45 @@ import { DavinciCard, DavinciCardHostType, DavinciCardInfomation } from "../../t
             let gameStorage = useGame.getState().cardInfomation;
             gameStorage.player = playerCard;
             gameStorage.enemy = enemyCard;
-
+            /*
+            gameStorage.enemy = [{
+                id : 82,
+                host : "enemy",
+                isDetect : false,
+                isOpen : false,
+                valueInfo : {
+                    color:"white",
+                    value : 0
+                }
+            },{
+                id : 81,
+                host : "enemy",
+                isDetect : false,
+                isOpen : false,
+                valueInfo : {
+                    color:"white",
+                    value : 0
+                }
+            },{
+                id : 83,
+                host : "enemy",
+                isDetect : false,
+                isOpen : false,
+                valueInfo : {
+                    color:"white",
+                    value : 1
+                }
+            },{
+                id : 84,
+                host : "enemy",
+                isDetect : false,
+                isOpen : false,
+                valueInfo : {
+                    color:"white",
+                    value : 1
+                }
+            }];
+            */
         }
 
     }

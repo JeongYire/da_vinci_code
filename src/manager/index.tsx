@@ -28,6 +28,8 @@ function MoveCard(index : number,target : DavinciCardHostType){
   
   console.log("MoveCard");
   CardManager.move(index);
+
+  // 잠깐 테스트로 DrawTurn으로 바꿈
   useGame.getState().gameInfomation.setStatus("playerAttackTurn");
 
 }
@@ -87,12 +89,12 @@ function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : 
   const gameStorage = useGame.getState();
 
   if(host == "player"){
-    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyTurn");
+    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn");
     return;
   }
 
   if(host == "enemy"){
-    result ? gameStorage.gameInfomation.setStatus("enemyTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
+    result ? gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
     return;
   }
 
@@ -104,9 +106,18 @@ const GameManager = {
   drawCard : DrawCard,
   moveCard : MoveCard,
   attackCard : AttackCard,
-  turnChange : TurnManager.turnChange,
+  turnChange : (status : DavinciGameStatus) => TurnManager.turnChange(status),
 }
 
 
 
 export default GameManager;
+
+
+
+
+
+
+
+
+

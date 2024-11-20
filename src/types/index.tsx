@@ -20,13 +20,13 @@ type DavinciCard = {
 
 */
 type PlayerTurn = "playerDrawTurn" | "playerChoiceTurn" | "playerAttackTurn" | "playerAttackRetryTurn";
-// type EnemyTurn = "enemyDrawTurn" | "enemyChoiceTurn" | "enemyAttackTurn" | "enemyAttackRetryTurn";
-type EnemyTurn = "enemyTurn";
+type EnemyTurn = "enemyDrawChoiceTurn" | "enemyAttackTurn" | "enemyAttackRetryTurn";
 type DavinciGameStatus = "idle" | PlayerTurn | EnemyTurn;
 
 interface DavinciMemory{
     id : number,
     recentIndex : number,
+    isDetect : boolean,
     candidateValue : DavinciCardValueType[],
   }
 

@@ -8,6 +8,9 @@ import { DavinciCard, DavinciCardHostType, DavinciCardValueType, DavinciGameStat
 //상대카드,내카드,중앙카드를 제어할 스토어를 만들어봅시다...
 
 interface GameCardStorage{
+  instance : {
+    card : DavinciCard[];
+  }
   deck : DavinciCard[],
   enemy : DavinciCard[],
   player : DavinciCard[],
@@ -49,6 +52,11 @@ interface CentralGameProcessingStorage {
  */
 const useGame = create<CentralGameProcessingStorage>((set,get) => ({
   cardInfomation : {
+    instance : {
+      get card() : DavinciCard[] {
+        return get().cardInfomation.player
+      }
+    },
     deck : [],
     enemy : [],
     player : [],
@@ -115,6 +123,27 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
     }
   }
 }));
+
+
+
+
+const usePlayerStore = create<PlayerStore>((set,get) => ({
+  instance : {
+    get card() : DavinciCard[] {
+      return get().card;
+    }
+  },
+  card : [],
+}));
+
+
+
+interface PlayerStore{
+  instance : {
+    card : DavinciCard[],
+  }
+  card : DavinciCard[],
+}
 
 export {useGame};
     
