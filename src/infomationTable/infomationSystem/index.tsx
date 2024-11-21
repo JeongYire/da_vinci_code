@@ -32,7 +32,7 @@ function InfomationSystem() {
       return;
     }
 
-    if(inputRef.current.value == "joker" || inputRef.current.value == "-"){
+    if(inputRef.current.value == "joker" || inputRef.current.value == "-" || inputRef.current.value == "ㅡ"){
       GameManager.attackCard(playerMemory.recentCard as DavinciCard,playerMemory.choiceCard,"joker");
       return;
     }
