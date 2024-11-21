@@ -93,14 +93,19 @@ function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : 
   const gameStorage = useGame.getState();
 
   if(host == "player"){
-    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : TurnManager.startEnemyTurn();
-    return;
+    result ? gameStorage.gameInfomation.setStatus("playerAttackRetryTurn") : gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn");
+
+    if(gameStorage.cardInfomation.enemy.filter(obj => !obj.isDetect).length == 0){
+      alert("당신이 이겼어요!");
+      location.reload();
+    }
   }
 
   if(host == "enemy"){
-    result ? TurnManager.startEnemyTurn() : gameStorage.gameInfomation.setStatus("playerDrawTurn");
-    return;
+    result ? gameStorage.gameInfomation.setStatus("enemyAttackRetryTurn") : gameStorage.gameInfomation.setStatus("playerDrawTurn");
   }
+
+  return result;
 
 }
 

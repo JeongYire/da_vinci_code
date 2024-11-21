@@ -34,8 +34,8 @@ export default (props : {host : "player" | "enemy",isOpen : boolean,color : Davi
                         fontSize:"xxx-large",
                         color:(props.host == "player" && props.isDetect) ? "red" : props.color == "black" ? "white" : "black"
                     }}>{props.value == "joker" ? "ㅡ" : props.value}</span>
-                    :
-                    <h5 style={{color:"red"}}>{props.value == "joker" ? "ㅡ" : props.value}</h5>
+                    :<></>
+                    //<h5 style={{color:"red"}}>{props.value == "joker" ? "ㅡ" : props.value}</h5>
                 }
             </div>
         </div>

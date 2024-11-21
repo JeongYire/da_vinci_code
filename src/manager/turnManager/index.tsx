@@ -10,18 +10,28 @@ import { ChoiceManager } from "../choiceManager";
 
 class CardTracker{
 
+    /**
+     * 생각을 다르게 해봐야할듯... 이러니까 예측값이 최적화가 됐는지 안됐는지 구분이 안간다. 
+     * 도중에 숫자가 드러났을경우 발생할 헤프닝이 예측이 안됨... 
+     * 우선 경우의수가 최신상태로 바뀔수있는 시점이 필요하다...
+     * 
+     * 1. isDetect 가 드러난경우
+     * 2. 내 패가 늘어난경우 
+     * 
+     * 이 두개를 보고 생각해보자...
+     */
+
     private cardMetadata : DavinciMemory[];
-    private myCard : DavinciCard[];
     private myMap : any;
-    private playerCard : DavinciCard[];
-   // private playerCard : DavinciCard[];
+    private myCard : DavinciCard[];
+
+
 
     
     constructor(){
        this.cardMetadata  = [];
-       this.myCard = [];
        this.myMap = {}
-       this.playerCard = [];
+       this.myCard = [];
     }
 
     /**
@@ -46,7 +56,7 @@ class CardTracker{
                 break;
             }
         }
-
+        !isStart ? this.doSynchronizationCard(array) : null;
         return array;
     }
 
@@ -57,7 +67,6 @@ class CardTracker{
     private initMetaData(){
         const gameStorage = useGame.getState();
         const playerCards = gameStorage.cardInfomation.player;
-        this.playerCard = playerCards;
         let length = playerCards.length;
         for(let i = 0; i < length; i++){
             this.cardMetadata.push({
@@ -65,6 +74,7 @@ class CardTracker{
                 recentIndex : i,
                 candidateValue : this.initCandidateValue(true),
                 isDetect : false,
+                realValue : playerCards[i].valueInfo.value,
             })
         }
     }
@@ -82,8 +92,8 @@ class CardTracker{
         }, {});  
     }
 
-    private makingMyMap(){
-        this.myMap = this.makingMap<DavinciCard>(this.myCard,(obj : DavinciCard) => {
+    private makingMyMap(myCard : DavinciCard[]){
+        this.myMap = this.makingMap<DavinciCard>(myCard,(obj : DavinciCard) => {
             return `${obj.valueInfo.value}`;
         })
     }
@@ -91,7 +101,7 @@ class CardTracker{
     /**
      * 정보가 전부 업데이트된후 사용되는 정리함수입니다...
      */
-    private doOptimization(target : DavinciMemory){
+    private doSynchronizationCard(candidateValue : DavinciCardValueType[], count : number = 0){
 
         /**
          * 본인, 즉 컴퓨터가 갖고있는 카드는 상대카드의 
@@ -99,29 +109,93 @@ class CardTracker{
          */
         const {myMap} = this;
 
+        console.log("doSynchronizationCard");
+
         for (const key in myMap) {
 
-            const check = target.candidateValue.findIndex(obj => `${obj}` == key) > -1;
+            /**
+             * myMap의 숫자 갯수대로 없어야합니다...
+             * 예시 : myMap[key] 가 1일경우 searchLength는 1이나와야한다... 
+             * 예시 : myMap[key] 가 2일경우 searchLength는 0이나와야한다... 
+             */
+            let search = candidateValue.filter(obj => `${obj}` == key);
+            let searchLength = search.length;
+            const check = searchLength > 0 && (2-myMap[key]) < searchLength;
             if(!check) continue;
 
-            for(let i = 0; i < myMap[key]; i++){
-                let findIndex = target.candidateValue.findIndex(obj => `${obj}` == key);
+            console.log("CHECK!");
+            console.log(candidateValue);
+
+            while(true){
+                let findIndex = candidateValue.findIndex(obj => `${obj}` == key);
                 if(findIndex > -1){
-                    target.candidateValue.splice(findIndex,1);
+                    candidateValue.splice(findIndex,1);
                 }else{
+                    console.log("못찾겠다");
+                    break;
+                }
+                let search = candidateValue.filter(obj => `${obj}` == key);
+                if(search.length == (2-myMap[key])){
+                    console.log("doSynchronizationCard 1단계 걸러짐");
                     break;
                 }
             }
+
+            console.log("CHECK END!");
+            console.log(candidateValue);
+ 
         }
 
+        /**
+         * 왼쪽거가 조커가 아니라면 걸러낼수있는 방법이 하나 더 있습니다.
+         * 배열은 오름차순이기때문에 다음에 올 인자는 더 커지거나 같은 숫자라는게 됩니다. 
+         * 같은 숫자가 아닐경우 무조건 큰 숫자가 온단거죠. 그럼 이전 인자의 후보군의 가장 작은숫자는 현재 인자의 후보군에서 제외 할 수 있습니다. 
+         */
+
+        if(count > 0){
+            /**
+             * 우선 조커가 있는지부터 확인합니다. 있으면 후보군에서 제외합니다... 
+             */
+
+            let leftTargetObject = this.cardMetadata[count - 1];
+            let leftTarget = leftTargetObject.candidateValue;
+            if(!( leftTarget.includes("joker") )){
+                /**
+                 * 이제 같은숫자가 있는지 확인합니다. 가장 작은숫자만 비교할거기때문에 index 0이면 됩니다.
+                 */
+                let loopCount = count;
+                if(leftTarget[0] < leftTarget[1]){
+                   
+                    
+                    /* 만약 있다면 이전배열빼고 전부 없애버려야합니다... */
+                    while(true){
+
+                        if(this.cardMetadata[loopCount] == undefined){
+                            break;
+                        }
+
+                        let leftTargetIndex = this.cardMetadata[loopCount].candidateValue.findIndex(obj => obj == leftTarget[0]);
+                        if(leftTargetIndex != -1){
+                            this.cardMetadata[loopCount].candidateValue.splice(leftTargetIndex,1);
+                            console.log("doOptimization 2단계 걸러짐 :" + leftTarget[0]);
+                        }
+
+                        loopCount += 1;
+                    }
+                }
+            }
+ 
+        }
+
+ 
+   
     }
 
     /**
      * metaData 배열을 업데이트할때 사용하는 함수입니다...
-     * 1,3,4,5
-     * 1,2,3,4,5
      */
     private updateMetaData(playerCard : DavinciCard[],playerCardLength : number){
+
         for(let i = 0; i < playerCardLength; i++){
             if(this.cardMetadata[i] == undefined || this.cardMetadata[i].id != playerCard[i].id){
                 console.log("변경된 감지 undeinfed 인덱스 : " + i);
@@ -130,34 +204,67 @@ class CardTracker{
                     id : playerCard[i].id,
                     recentIndex : i,
                     candidateValue : this.initCandidateValue(),
-                    isDetect : playerCard[i].isDetect,  
+                    isDetect : playerCard[i].isDetect, 
+                    realValue : playerCard[i].valueInfo.value, 
                 };
        
+                /* 이걸 잠시 중단합니다.. */
+                //this.doSynchronizationCard(newValue.candidateValue);
                 this.cardMetadata.splice(i,0,newValue)
-                this.doOptimization(newValue);
+                
                 break;
             }
             if(this.cardMetadata[i].isDetect != playerCard[i].isDetect){
                 console.log("변경된 감지 isDetect 인덱스 : " + i);
                 this.cardMetadata[i].isDetect = playerCard[i].isDetect;
-                break;
+                this.cardMetadata[i].candidateValue = [this.cardMetadata[i].realValue];
+                this.isDetectOptimization(i,this.cardMetadata[i].realValue);
             }
         }
 
 
     }
+
+    private isDetectOptimization(index : number,realValue : DavinciCardValueType){
+
+        /**
+         * 만약 isDetect, 즉 밝혀진 상태라면 무조건 제외합니다... 
+         */
+        let loopCount = 0;
+        while(true){
+            let target = this.cardMetadata[loopCount];
+
+            if(target == undefined) break;
+            if(loopCount != index){
+
+                let findIndex = target.candidateValue.findIndex(obj => obj == realValue);
+
+                if(findIndex > -1){
+                    this.cardMetadata[loopCount].candidateValue.splice(findIndex,1);
+                    console.log("IS DETECT 작업을 통해 걸러짐");
+                }
+
+            }
+ 
+            loopCount += 1;
+        }
+    }
     initTracker(){
+        /* 이 시점에서 아직 정리되지않음 */
         this.initMetaData();
+        /* 이 시점에도 아직 정리안됨 */
         this.updateEnemyCard();
+        /* 이 시점에서 정리됨 */
         let length = this.cardMetadata.length;
         for(let i = 0; i < length; i++){
-           this.doOptimization(this.cardMetadata[i]);
+           this.doSynchronizationCard(this.cardMetadata[i].candidateValue,i);
         }
     }
 
     updateMemory(){
-        this.updatePlayerCard();
+        /* 이제 여기서 정리될게 필요한데... */
         this.updateEnemyCard();
+        this.updatePlayerCard();
     }
 
     private updatePlayerCard(){
@@ -167,37 +274,100 @@ class CardTracker{
         let playerCardLength = playerCards.length;
 
         if((this.cardMetadata.length != playerCardLength) || playerCards.findIndex(obj => obj.isDetect == true) != -1){
-
             this.updateMetaData(playerCards,playerCardLength);
         }
+
     }
 
     private updateEnemyCard(){
 
         const gameStorage = useGame.getState();
-        const myCard = gameStorage.cardInfomation.enemy;
-        this.myCard = myCard;
-        this.makingMyMap();
+        let myCard = gameStorage.cardInfomation.enemy;
 
-        if(this.myCard.length != myCard.length){
-            console.log("에너미 카드의 변화가 감지됐어요! 업데이트를 실행합니다...");
-            /* 임시로 만드는중... */
-            this.myCard = myCard;
-            this.makingMyMap();
+        if(myCard.length != this.myCard.length){
+            console.log("에너미카드 다름 감지");
+            this.myCard = [...myCard];
+            this.makingMyMap(this.myCard);
+
             let length = this.cardMetadata.length;
             for(let i = 0; i < length; i++){
-               this.doOptimization(this.cardMetadata[i]);
+                this.doSynchronizationCard(this.cardMetadata[i].candidateValue,i);
             }
         }
+
+
     }
 
     /* 플레이어의 카드에서 예측을 해봅니다... */
-    doThinking(){
+    doThinking(stop : boolean = false){
 
         console.log("컴퓨터의 생각 시작!!");
+        console.log(this.myMap);
         /* metaData 를 살펴봅시다... */
         console.log(this.cardMetadata);
 
+        console.log("STOP으로 인해 멈춰짐")
+        if(stop) return;
+
+        let gameStorage = useGame.getState();
+        let myRecentCard = gameStorage.memoryStorage.enemy.recentCard as DavinciCard;
+
+        console.log(myRecentCard);
+        //TurnManager.attackCard(recentCard)
+
+       //
+
+        // 먼저 드러나지않은 요소를 맞추는거니까 filter로 한번 거릅니다...
+        let notDetectMetaData = this.cardMetadata.filter(obj => !obj.isDetect);
+
+        if(notDetectMetaData.length == 0){
+            console.log("컴퓨터가 이겼다...")
+            alert("당신이 졌어요!")
+            location.reload();
+            return;
+        }
+
+        console.log("notDetectMetaData ");
+        console.log([...notDetectMetaData]);
+
+        /*
+        // 그 다음 Math.min 으로 가장 길이가 작은 배열을 구합니다...
+        let minLength = Math.min(...(notDetectMetaData.map(obj => obj.candidateValue.length)));
+        console.log(`minLength : ${minLength}`);
+
+        // 이제 그 가장 작은 길이와 같은 배열이 있는지 걸러줍시다...
+        notDetectMetaData = notDetectMetaData.filter(obj => obj.candidateValue.length == minLength);
+        */
+
+        // 그럼 그중 가장 첫번째요소. 즉 제일 값이 적은걸 공격카드로 세웁니다.
+        let attackData = notDetectMetaData[0];
+        let attackCard = gameStorage.cardInfomation.player.find(obj => obj.id == attackData.id);
+
+        // undefined가 나올수없습니다.. 나오는순간 그냥 다 꼬인거임 
+        if(attackCard == undefined){
+            console.log("걍 오류");
+            throw new Error("오류라고!!!");
+        }
+        
+        console.log("컴퓨터가 예측하는 카드 값 ");
+        console.log(attackData);
+        console.log("-- 컴퓨터가 주장하는 예측 값---");
+        console.log([...attackData.candidateValue][0]);
+        console.log("컴퓨터가 공격하는 카드 값 ");
+        console.log(attackCard);
+        const attakcResult = GameManager.attackCard(myRecentCard,attackCard,attackData.candidateValue[0],"enemy");
+        console.log("공격 결과는... 두그두그 :" + attakcResult);
+
+        let attackDataIndex = this.cardMetadata.findIndex(obj =>  obj.id == attackData.id);
+        if(!attakcResult){
+            // 실패했다면... 
+            attackData.candidateValue.shift();
+            this.cardMetadata[attackDataIndex].candidateValue = attackData.candidateValue;
+        }else{
+            // 성공했다면...
+            console.log("성공!!!");
+            this.doThinking();
+        }
     }
 
 }
@@ -283,6 +453,9 @@ class TurnSystemManager{
     turnChange(status : DavinciGameStatus){
         console.log(`현재 턴 : ${status}`);
         this.tracker.updateMemory();
+        if(status=="enemyDrawChoiceTurn"){
+            this.startEnemyTurn();
+        }
     }
 
     private isVaildRange(index : number,recentCard : DavinciCard,cards : DavinciCard[]){
@@ -293,27 +466,23 @@ class TurnSystemManager{
 
     startEnemyTurn(){
         let gameStorage = useGame.getState();
+
         /* 먼저 턴을 바꿉니다. */
-        gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn")
+        //gameStorage.gameInfomation.setStatus("enemyDrawChoiceTurn")
         /* 그리고 카드를 뽑습니다. */
         GameManager.drawCard("enemy");
         /* 뽑힌 카드 를 봅니다.*/
         
         let recentCard = gameStorage.memoryStorage.enemy.recentCard;
 
-        console.log("-- 뽑힌 카드 --");
-        console.log(recentCard?.valueInfo.value);
-
         let enemyCard = gameStorage.cardInfomation.enemy; 
         enemyCard.reverse();
         if(recentCard == undefined)return;
-  
+    
         if(recentCard?.valueInfo.value != "joker"){
             
             /* 상대패.. 즉 enemyCard는 왼쪽기준으로 가장 큽니다... 그걸 유의하시오 */
-            console.log("현재 배열");
-            console.log(enemyCard);
-
+ 
             if(recentCard == undefined)return;
   
             let count = 0;

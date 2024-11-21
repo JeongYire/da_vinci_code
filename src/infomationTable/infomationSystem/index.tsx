@@ -73,7 +73,7 @@ function InfomationSystem() {
           {
             status == "playerAttackRetryTurn" ? 
             <div>
-              <button onClick={() => attack()}>턴 종료</button>
+              <button onClick={() => GameManager.turnChange("enemyDrawChoiceTurn")}>턴 종료</button>
             </div> : <></>
           }
         </>

@@ -23,11 +23,12 @@ type PlayerTurn = "playerDrawTurn" | "playerChoiceTurn" | "playerAttackTurn" | "
 type EnemyTurn = "enemyDrawChoiceTurn" | "enemyAttackTurn" | "enemyAttackRetryTurn";
 type DavinciGameStatus = "idle" | PlayerTurn | EnemyTurn;
 
-interface DavinciMemory{
+type DavinciMemory = {
     id : number,
     recentIndex : number,
     isDetect : boolean,
     candidateValue : DavinciCardValueType[],
+    realValue : DavinciCardValueType,
   }
 
 export type {DavinciMemory,DavinciCard,DavinciCardColorType,DavinciCardValueType,DavinciCardHostType,DavinciCardInfomation,DavinciGameStatus};
