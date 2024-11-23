@@ -141,6 +141,28 @@ import { DavinciCard, DavinciCardHostType, DavinciCardInfomation } from "../../t
             let deck = gameStorage.cardInfomation.deck;
             let valueArray : DavinciCard[] = [];
 
+            if(totalLoopCount == 1){
+
+             // 테스트 시작
+             /*
+            while(true){
+                let value = prompt("뭐 원해");
+                let target = deck.findIndex(obj => obj.valueInfo.value.toString() == value.toString());
+                if(target > -1){
+                    valueArray.push(deck[target]);
+                    deck.splice(target,1);
+                    break;
+                }
+            }
+
+            return valueArray;
+            */
+            // 테스트 끝
+
+            }
+
+
+
             let loopCount = 0;
             while(true){
 

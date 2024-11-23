@@ -3,10 +3,10 @@ import { useGame } from "../../store";
 
 
 function InfomationMessage() {
-  const message = useGame(state => state.gameInfomation.message);
+  const message = useGame(state => state.gameInfomation.status);
   return (
     <>
-      <h3>{message}</h3>
+      <h3>{GameManager.getStatusMessage(message)}</h3>
     </>
   )
 }

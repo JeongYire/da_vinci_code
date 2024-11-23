@@ -10,6 +10,8 @@ function DrawCard(target : DavinciCardHostType){
   console.log("DrawCard");
 
   const card = CardManager.draw()[0];
+
+  console.log(card);
   
   let gameStorage = useGame.getState();
 
@@ -17,12 +19,16 @@ function DrawCard(target : DavinciCardHostType){
   /* 현재는 GameManager가 하고있습니다... */
 
   if(target == "player"){
-    card.host = "player";
-    gameStorage.memoryStorage.player.setRecentCard(card);
+    if(card != undefined){
+      card.host = "player";
+      gameStorage.memoryStorage.player.setRecentCard(card);
+    }
     gameStorage.gameInfomation.setStatus("playerChoiceTurn");
   }else{
-    card.host = "enemy";
-    gameStorage.memoryStorage.enemy.setRecentCard(card);
+    if(card != undefined){
+      card.host = "enemy";
+      gameStorage.memoryStorage.enemy.setRecentCard(card);
+    }
   }
   
 
@@ -89,6 +95,9 @@ function GetStatusMessage(status : DavinciGameStatus | string){
 
 function AttackCard(myCard : DavinciCard,targetCard : DavinciCard,attackValue : DavinciCardValueType,host : "player" | "enemy" = "player"){
 
+  console.log("ATTACK CARD");
+  console.log(attackValue);
+  
   const result = TurnManager.attackCard(myCard,targetCard,attackValue,host);
   const gameStorage = useGame.getState();
 

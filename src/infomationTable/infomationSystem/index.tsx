@@ -27,17 +27,14 @@ function InfomationSystem() {
       return;
     }
 
-    if(Number.isNaN(Number(inputRef.current.value)) && (inputRef.current.value.toLowerCase() != "joker" && inputRef.current.value != "-")){
-      setMessage("정확한 값을 적어주세요! 0~11의 숫자나 joker 혹은 - 가 들어갈 수 있습니다.");
-      return;
-    }
+    let value = inputRef.current.value;
 
-    if(inputRef.current.value == "joker" || inputRef.current.value == "-" || inputRef.current.value == "ㅡ"){
+    if(value == "joker" || value == "-" || value == "ㅡ"){
       GameManager.attackCard(playerMemory.recentCard as DavinciCard,playerMemory.choiceCard,"joker");
       return;
     }
 
-    if(!(-1 < Number(inputRef.current?.value) && 12 > Number(inputRef.current?.value))){
+    if(!(parseInt(value) > -1 && parseInt(value) < 12)){
       setMessage("정확한 숫자을 적어주세요! 0~11의 숫자가 들어갈 수 있습니다.");
       return;
     }

@@ -56,7 +56,7 @@ const PlayerArrowList = () => {
             setMessage("거기에 둘 수 없어요!");
         }
     }
-
+    
     if(status == "playerChoiceTurn" || status == "playerAttackRetryTurn") manager.current.update();
 
     return <ArrowList host="player" check={status == "playerChoiceTurn"} onClick={choiceAction}/>;

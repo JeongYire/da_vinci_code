@@ -11,6 +11,8 @@ function EnemyHand() {
   const choiceCard = useGame((state) => state.memoryStorage.player.setChoiceCard);
   const status = useGame((state) => state.gameInfomation.status);
 
+  
+
   function choiceAction(index : number){
     console.log(enemyCard[index]);
     choiceCard(enemyCard[index]);
