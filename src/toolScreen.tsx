@@ -4,6 +4,8 @@ import GameManager from "./manager";
 function ToolScreen() {
    console.log("ToolScreen");
 
+   const logs = useGame(state => state.gameInfomation.log);
+
 
   return (
     <div style={{
@@ -20,22 +22,16 @@ function ToolScreen() {
           게임시작
        </h2>
        <button onClick={GameManager.gameStart}>게임시작</button>
-       <h2>
-          게임리셋
-       </h2>
-       <button onClick={() => {}}>게임리셋</button>
-       <h2>
-          게임테스트
-       </h2>
-       <button onClick={() => {}}>테스트</button>
-       {
-      /*
         <h2>
           로그
        </h2>
-       <button>게임시작</button>
-       */
-       }
+       <div>
+         {
+            logs.map(obj => {
+               return <div><span>{obj}</span></div>
+            })
+         }
+       </div>
     </div>
   )
 }

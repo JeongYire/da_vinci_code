@@ -339,6 +339,7 @@ class CardTracker{
             throw new Error("오류라고!!!");
         }
 
+        /*
         if(status == "enemyAttackRetryTurn"){
             let diffLength = attackData.candidateValue.length;
             console.log("difflength : " + diffLength);
@@ -355,6 +356,7 @@ class CardTracker{
                 return;
             }
         }
+            */
         
         console.log(`컴퓨터가 예측하는 카드 값 : ${attackData.candidateValue.toString()}`);
         console.log(`컴퓨터가 주장한다 : ${attackData.candidateValue[0].toString()}`);
@@ -461,6 +463,8 @@ class TurnSystemManager{
             this.attackSystem.attackFaild(host);       
         }
 
+        useGame.getState().gameInfomation.setLog(`${host == "player" ? "당신은" : "상대방은"} ${targetCard.id}번 카드를 ${attackValue}라고 주장했고. ${attackVaild ? "성공했습니다." : "실패했습니다."}`);
+
         return attackVaild;
     }
 
@@ -472,7 +476,6 @@ class TurnSystemManager{
     turnChange(status : DavinciGameStatus){
 
         this.tracker.updateMemory();
-
 
         if(status=="enemyDrawChoiceTurn"){
             if(useGame.getState().cardInfomation.deck.length == 0){

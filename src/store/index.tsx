@@ -22,6 +22,8 @@ interface GameInfomation{
   message : string,
   setMessage : (value : string) => void,
   setStatus : (status : DavinciGameStatus) => void,
+  log : string[],
+  setLog : (value : string) => void
 }
 
 interface CommonMemory{
@@ -35,7 +37,7 @@ interface CommonMemory{
 
 interface GameMemory{
   player : CommonMemory,
-  enemy : CommonMemory & {brain : DavinciMemory[]}
+  enemy : CommonMemory
 }
 
 interface CentralGameProcessingStorage {
@@ -90,6 +92,14 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
         ...state.gameInfomation,
         message : value,
       }}))
+    },
+    log : [],
+    setLog : (value) => {
+      //get().gameInfomation.log.push(value);
+      set((state) => ({gameInfomation : {
+        ...state.gameInfomation,
+        log : [...state.gameInfomation.log,value],
+      }}))
     }
   },
   memoryStorage : {
@@ -115,22 +125,12 @@ const useGame = create<CentralGameProcessingStorage>((set,get) => ({
       setChoiceCard : (card : DavinciCard) => {
         get().memoryStorage.enemy.choiceCard = card;
       },
-      brain : [],
     }
   }
 }));
 
 
 
-
-
-
-interface PlayerStore{
-  instance : {
-    card : DavinciCard[],
-  }
-  card : DavinciCard[],
-}
 
 
 export {useGame};
